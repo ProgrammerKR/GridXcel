@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GridXcel App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            overflow-x: auto;
+        }
+
+        td, th {
+            width: 50px;
+            height: 30px;
+            border: 1px solid #ccc;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: #fff;
+        }
+
+        input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            background-color: transparent;
+        }
+
+        .selected {
+            background-color: #d0e0f0;
+        }
+    </style>
+</head>
+<body>
+    <table id="excelTable">
+        <!-- Table will be dynamically populated by JavaScript -->
+    </table>
+
+    <script>
+        const rows = 5000; // Adjust the rows to a manageable number for testing
+        const cols = 3000; // Adjust the columns to a manageable number for testing
+        const table = document.getElementById('excelTable');
+
+        // Initialize table
+        for (let i = 0; i < rows; i++) {
+            const row = table.insertRow();
+            for (let j = 0; j < cols; j++) {
+                const cell = row.insertCell();
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `cell-${i}-${j}`;
+                input.addEventListener('input', updateFormula);
+                cell.appendChild(input);
+            }
+        }
+
+        // Handle formulas and update cell values
+        function updateFormula(event) {
+            const input = event.target;
+            const [_, row, col] = input.id.split('-').map(Number);
+            let value = input.value.trim();
+
+            // Simple formula parsing (for demonstration)
+            if (value.startsWith('=') && value.length > 1) {
+                value = parseFormula(value.slice(1), row, col);
+                input.value = value;
+            }
+
+            // Simulate some basic formulas
+            function parseFormula(formula, row, col) {
+                const match = formula.match(/([A-Z]+)(\d+)/);
+                if (match) {
+                    const formulaRow = parseInt(match[2]) - 1;
+                    const formulaCol = match[1].charCodeAt(0) - 65;
+                    const targetCell = document.getElementById(`cell-${formulaRow}-${formulaCol}`);
+                    return targetCell ? targetCell.value : '';
+                }
+                return value;
+            }
+        }
+
+        // Example of adding simple formula parsing for SUM
+        function addFormula(row, col) {
+            // Add formula handling logic here (e.g., SUM, AVERAGE, etc.)
+        }
+    </script>
+</body>
+  </html>
